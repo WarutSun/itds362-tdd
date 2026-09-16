@@ -9,7 +9,7 @@ class Quantity:
     def plus(self, other):
         return Sum(self, other)
 
-    def reduce(self, unit):
+    def reduce(self, unit, converter):
         return self
 
     def __eq__(self, other):
@@ -31,10 +31,25 @@ class Sum:
         self.left = left
         self.right = right
 
-    def reduce(self, unit):
-        return Quantity(self.left.amount + self.right.amount, unit)
+    def reduce(self, unit, converter):
+        left_amount = converter.convert(self.left, unit)
+        right_amount = converter.convert(self.right, unit)
+        return Quantity(left_amount + right_amount, unit)
 
 
 class Converter:
+    def __init__(self):
+        self.rates = {}
+
+    def add_rate(self, from_unit, to_unit, rate):
+        self.rates[(from_unit, to_unit)] = rate
+
+    def convert(self, quantity, to_unit):
+        if quantity.unit == to_unit:
+            return quantity.amount
+        rate = self.rates[(quantity.unit, to_unit)]
+        return quantity.amount * rate
+
     def reduce(self, source, unit):
-        return source.reduce(unit)
+        return source.reduce(unit, self)
+      
