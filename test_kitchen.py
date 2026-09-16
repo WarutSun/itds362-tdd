@@ -1,3 +1,4 @@
+from kitchen import Quantity, grams, ounces, Converter
 from kitchen import Quantity, grams, ounces
 
 def test_multiplication_returns_a_new_quantity():
@@ -11,3 +12,8 @@ def test_equality():
 
 def test_grams_are_not_ounces():
     assert grams(1) != ounces(1)
+    
+def test_simple_addition():
+    total = grams(200).plus(grams(300))
+    converter = Converter()
+    assert converter.reduce(total, "g") == grams(500)
